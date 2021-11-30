@@ -1,5 +1,6 @@
 package com.finalproyect.informatorio.controller;
 
+import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
 
 import com.finalproyect.informatorio.entity.User;
@@ -8,8 +9,11 @@ import com.finalproyect.informatorio.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -23,14 +27,38 @@ public class UserController {
         this.userRepository = userRepository;
     }
 
+    // ALTA
+    @PostMapping(value = "/user")
+    public ResponseEntity<?> set(@RequestBody @Valid User user){
+        return new ResponseEntity(userRepository.save(user), HttpStatus.CREATED);
+    }
+
+    // MOSTRAR TODOS
     @GetMapping(value = "/users")
     public ResponseEntity<User> getAll(){
         return new ResponseEntity(userRepository.findAll(), HttpStatus.OK);
     }
 
-    @PostMapping(value = "/users")
-    public ResponseEntity<?> set(@RequestBody @Valid User user){
-        return new ResponseEntity(userRepository.save(user), HttpStatus.CREATED);
+    // BAJA
+    @DeleteMapping("user/{idUser}/delete")
+    public HttpStatus delete(@PathVariable ("idUser") Long idUser){
+        User user = userRepository.findById(idUser).orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
+        userRepository.delete(user);
+        return HttpStatus.ACCEPTED;
     }
 
+    // MODIFICACIÓN
+    @PutMapping("user/{idUser}/modify")
+    public ResponseEntity<?> modifiy(@RequestBody User user, @PathVariable ("idUser") Long idUser){
+        User newUser = userRepository.findById(idUser).orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
+        newUser.setName(user.getName());
+        newUser.setLastName(user.getLastName());
+        newUser.setCity(user.getCity());
+        newUser.setProvince(user.getProvince());
+        newUser.setCountry(user.getCountry());
+        newUser.setUsername(user.getUsername());
+        newUser.setPassword(user.getPassword());
+        newUser.setUserType(user.getUserType());
+        return new ResponseEntity(userRepository.save(newUser),HttpStatus.CREATED);
+    }
 }

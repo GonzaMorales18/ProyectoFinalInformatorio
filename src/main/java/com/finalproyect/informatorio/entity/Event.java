@@ -11,6 +11,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
+import com.finalproyect.informatorio.dto.EventStatus;
+
 import org.hibernate.annotations.CreationTimestamp;
 
 @Entity
@@ -26,7 +28,7 @@ public class Event {
 
     private LocalDateTime closeDate;
     private String details;
-    private String status;
+    private EventStatus eventStatus;
     private Long prize;
 
     public Long getId() {
@@ -53,11 +55,11 @@ public class Event {
     public void setDetails(String details) {
         this.details = details;
     }
-    public String getStatus() {
-        return status;
+    public EventStatus getEventStatus() {
+        return eventStatus;
     }
-    public void setStatus(String status) {
-        this.status = status;
+    public void setEventStatus(EventStatus eventStatus) {
+        this.eventStatus = eventStatus;
     }
     public Long getPrize() {
         return prize;
@@ -65,15 +67,15 @@ public class Event {
     public void setPrize(Long prize) {
         this.prize = prize;
     }
-    public void addCartLine(Entrepreneurship entrepreneurship) {
+    public List<Entrepreneurship> getEntrepreneurships() {
+        return entrepreneurships;
+    }
+    public void addEntrepreneurships(Entrepreneurship entrepreneurship) {
         entrepreneurships.add(entrepreneurship);
         entrepreneurship.setEvent(this);
     }
-    public void removeCartLine(Entrepreneurship entrepreneurship) {
+    public void removentrepreneurship(Entrepreneurship entrepreneurship) {
         entrepreneurships.remove(entrepreneurship);
         entrepreneurship.setEvent(null);
-    }
-    public void setEntrepreneurships(List<Entrepreneurship> entrepreneurships) {
-        this.entrepreneurships = entrepreneurships;
     }
 }

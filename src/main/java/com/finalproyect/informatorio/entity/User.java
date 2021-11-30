@@ -1,12 +1,22 @@
 package com.finalproyect.informatorio.entity;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.finalproyect.informatorio.dto.UserType;
 
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -18,17 +28,21 @@ public class User {
     private Long id;
     @CreationTimestamp
     private LocalDateTime creationDate;
+    @JsonIgnore
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Vote> votes = new ArrayList<>();
     @NotBlank
     private String name;
     private String lastName;
     private String city;
     private String province;
     private String country;
+    @Column(unique = true, nullable = false)
     @Email(regexp = "^[\\w!#$%&'*+/=?`{|}~^-]+(?:\\.[\\w!#$%&'*+/=?`{|}~^-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$")
     private String username;
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
-    
-    private String type;
+    private UserType userType;
 
     public Long getId() {
         return id;
@@ -84,10 +98,21 @@ public class User {
     public void setPassword(String password) {
         this.password = password;
     }
-    public String getType() {
-        return type;
+    public UserType getUserType() {
+        return userType;
     }
-    public void setType(String type) {
-        this.type = type;
+    public void setUserType(UserType userType) {
+        this.userType = userType;
+    }
+    public List<Vote> getVotes() {
+        return votes;
+    }
+    public void addVote(Vote vote) {
+        votes.add(vote);
+        vote.setUser(this);
+    }
+    public void removeVote(Vote vote) {
+        votes.remove(vote);
+        vote.setUser(null);
     }
 }

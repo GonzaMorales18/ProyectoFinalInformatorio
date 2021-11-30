@@ -8,6 +8,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import org.hibernate.annotations.CreationTimestamp;
 
 @Entity
@@ -17,6 +19,7 @@ public class Entrepreneurship {
     private Long id;
     @CreationTimestamp
     private LocalDateTime creationDate;
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     private Event event;
 

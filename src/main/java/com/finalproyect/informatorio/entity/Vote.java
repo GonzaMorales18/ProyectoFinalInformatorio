@@ -7,6 +7,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 
 import org.hibernate.annotations.CreationTimestamp;
@@ -19,7 +20,7 @@ public class Vote {
     private Long id;
     @CreationTimestamp
     private LocalDateTime creationDate;
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     private User user;
     @OneToOne(fetch = FetchType.LAZY)
     private Entrepreneurship entrepreneurship;
