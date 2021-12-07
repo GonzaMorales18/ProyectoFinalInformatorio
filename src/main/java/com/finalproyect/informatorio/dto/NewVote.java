@@ -1,9 +1,14 @@
 package com.finalproyect.informatorio.dto;
 
+import javax.validation.constraints.NotBlank;
+
 public class NewVote {
 
+    @NotBlank
     private Long idUser;
+    @NotBlank
     private Long idEntrepreneurship;
+    @NotBlank
     private String generatedIn;
 
     public Long getIdUser() {

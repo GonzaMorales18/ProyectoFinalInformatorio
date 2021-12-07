@@ -1,5 +1,8 @@
 package com.finalproyect.informatorio.controller;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
 
@@ -7,6 +10,7 @@ import com.finalproyect.informatorio.entity.User;
 import com.finalproyect.informatorio.repository.UserRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -15,6 +19,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -40,7 +45,7 @@ public class UserController {
     }
 
     // BAJA
-    @DeleteMapping("user/{idUser}/delete")
+    @DeleteMapping("/user/{idUser}/delete")
     public HttpStatus delete(@PathVariable ("idUser") Long idUser){
         User user = userRepository.findById(idUser).orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
         userRepository.delete(user);
@@ -48,17 +53,25 @@ public class UserController {
     }
 
     // MODIFICACIÓN
-    @PutMapping("user/{idUser}/modify")
-    public ResponseEntity<?> modifiy(@RequestBody User user, @PathVariable ("idUser") Long idUser){
+    @PutMapping("/user/{idUser}/modify")
+    public ResponseEntity<?> modifiy(@RequestBody @Valid User user, @PathVariable ("idUser") Long idUser){
         User newUser = userRepository.findById(idUser).orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
-        newUser.setName(user.getName());
-        newUser.setLastName(user.getLastName());
         newUser.setCity(user.getCity());
         newUser.setProvince(user.getProvince());
         newUser.setCountry(user.getCountry());
-        newUser.setUsername(user.getUsername());
         newUser.setPassword(user.getPassword());
-        newUser.setUserType(user.getUserType());
         return new ResponseEntity(userRepository.save(newUser),HttpStatus.CREATED);
+    }
+
+    // MOSTRAR POR CIUDAD
+    @GetMapping(value = "/users/city={city}")
+    public ResponseEntity<User> getByCity(@PathVariable ("city") String city){
+        return new ResponseEntity(userRepository.findByCity(city), HttpStatus.OK);
+    }
+
+    // MOSTRAR POSTERIOR A FECHA
+    @GetMapping(value = "/users/date")
+    public ResponseEntity<User> getByDate(@RequestParam  @DateTimeFormat (iso = DateTimeFormat.ISO.DATE) LocalDate date){
+        return new ResponseEntity(userRepository.findByDate(date), HttpStatus.OK);
     }
 }

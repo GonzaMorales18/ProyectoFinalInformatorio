@@ -1,8 +1,9 @@
 package com.finalproyect.informatorio.controller;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 import javax.persistence.EntityNotFoundException;
+import javax.validation.Valid;
 
 import com.finalproyect.informatorio.dto.AddEntrepreneurship;
 import com.finalproyect.informatorio.entity.Entrepreneurship;
@@ -35,7 +36,7 @@ public class EventController {
 
     // ALTA
     @PostMapping(value = "/event")
-    public ResponseEntity<?> set(@RequestBody Event event){
+    public ResponseEntity<?> set(@RequestBody @Valid Event event){
         return new ResponseEntity(eventRepository.save(event), HttpStatus.CREATED);
         
     }
@@ -47,7 +48,7 @@ public class EventController {
     }
 
      // BAJA
-     @DeleteMapping("event/{idEvent}/delete")
+     @DeleteMapping("/event/{idEvent}/delete")
      public HttpStatus delete(@PathVariable ("idEvent") Long idEvent){
         Event event = eventRepository.findById(idEvent).orElseThrow(() -> new EntityNotFoundException("Evento no encontrado"));
         eventRepository.delete(event);
@@ -55,17 +56,17 @@ public class EventController {
      }
 
     // INSCRIBIR EMPRENDIMIENTO A EVENTO
-    @PutMapping(value = "addEntrepreneurship")
-    public ResponseEntity<?> addEntrepreneurship(@RequestBody AddEntrepreneurship addEntrepreneurship) throws Exception{
+    @PutMapping(value = "/addEntrepreneurship")
+    public ResponseEntity<?> addEntrepreneurship(@RequestBody @Valid AddEntrepreneurship addEntrepreneurship) throws Exception{
         Event event = eventRepository.findById(addEntrepreneurship.getIdEvent()).orElseThrow(() -> new EntityNotFoundException("Evento no encontrado"));
-        Entrepreneurship entrepreneurship = entrepreneurshipRepository.findById(addEntrepreneurship.getIdEntrepreneurship()).orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
+        Entrepreneurship entrepreneurship = entrepreneurshipRepository.findById(addEntrepreneurship.getIdEntrepreneurship()).orElseThrow(() -> new EntityNotFoundException("Emprendimiento no encontrado"));
         event.addEntrepreneurships(entrepreneurship);
         return new ResponseEntity(eventRepository.save(event), HttpStatus.CREATED);
     }
 
     // MODIFICACIÓN
-    @PutMapping("event/{idEvent}/modify")
-    public ResponseEntity<?> modifiy(@RequestBody Event event, @PathVariable ("idEvent") Long idEvent){
+    @PutMapping("/event/{idEvent}/modify")
+    public ResponseEntity<?> modifiy(@RequestBody @Valid Event event, @PathVariable ("idEvent") Long idEvent){
         Event newEvent = eventRepository.findById(idEvent).orElseThrow(() -> new EntityNotFoundException("Evento no encontrado"));
         newEvent.setEventStatus(event.getEventStatus());
         newEvent.setDetails(event.getDetails());
@@ -73,12 +74,18 @@ public class EventController {
         return new ResponseEntity(eventRepository.save(newEvent),HttpStatus.CREATED);
     }
     // CERRAR
-    @PutMapping("event/{idEvent}/close")
-    public ResponseEntity<?> close(@RequestBody Event event, @PathVariable ("idEvent") Long idEvent){
+    @PutMapping("/event/{idEvent}/close")
+    public ResponseEntity<?> close(@RequestBody @Valid Event event, @PathVariable ("idEvent") Long idEvent){
         Event newEvent = eventRepository.findById(idEvent).orElseThrow(() -> new EntityNotFoundException("Evento no encontrado"));
         newEvent.setEventStatus(event.getEventStatus());
-        newEvent.setCloseDate(LocalDateTime.now());
+        newEvent.setCloseDate(LocalDate.now());
         return new ResponseEntity(eventRepository.save(newEvent),HttpStatus.CREATED);
     }
+
+    // MOSTAR TODOS
+    /* @GetMapping(value = "/events/ranking/{idEvent}")
+    public ResponseEntity<Event> getRanking(@PathVariable ("idEvent") Long idEvent){
+        return new ResponseEntity(entrepreneurshipRepository.rankingForVotes(idEvent), HttpStatus.OK);
+    } */
 
 }

@@ -1,6 +1,6 @@
 package com.finalproyect.informatorio.entity;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,6 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.validation.constraints.NotBlank;
 
 import com.finalproyect.informatorio.dto.EventStatus;
 
@@ -22,13 +23,14 @@ public class Event {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @CreationTimestamp
-    private LocalDateTime creationDate;
+    private LocalDate creationDate;
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Entrepreneurship> entrepreneurships = new ArrayList<>();
-
-    private LocalDateTime closeDate;
+    private LocalDate closeDate;
     private String details;
+    @NotBlank
     private EventStatus eventStatus;
+    @NotBlank
     private Long prize;
 
     public Long getId() {
@@ -37,16 +39,16 @@ public class Event {
     public void setId(Long id) {
         this.id = id;
     }
-    public LocalDateTime getCreationDate() {
+    public LocalDate getCreationDate() {
         return creationDate;
     }
-    public void setCreationDate(LocalDateTime creationDate) {
+    public void setCreationDate(LocalDate creationDate) {
         this.creationDate = creationDate;
     }
-    public LocalDateTime getCloseDate() {
+    public LocalDate getCloseDate() {
         return closeDate;
     }
-    public void setCloseDate(LocalDateTime closeDate) {
+    public void setCloseDate(LocalDate closeDate) {
         this.closeDate = closeDate;
     }
     public String getDetails() {

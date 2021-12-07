@@ -1,6 +1,8 @@
 package com.finalproyect.informatorio.controller;
 
 import javax.persistence.EntityNotFoundException;
+import javax.validation.Valid;
+
 import java.util.List;
 
 import com.finalproyect.informatorio.dto.NewVote;
@@ -39,7 +41,7 @@ public class VoteController {
 
     // ALTA
     @PostMapping(value = "/vote")
-    public ResponseEntity<?> setVote(@RequestBody NewVote newVote){
+    public ResponseEntity<?> setVote(@RequestBody @Valid NewVote newVote){
         Vote vote = new Vote();
         User user = userRepository.findById(newVote.getIdUser()).orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
         vote.setUser(user);
@@ -56,9 +58,9 @@ public class VoteController {
     }
 
     // BAJA
-    @DeleteMapping("vote/{idVote}/delete")
+    @DeleteMapping("/vote/{idVote}/delete")
     public HttpStatus delete(@PathVariable ("idVote") Long idVote){
-       Vote vote = voteRepository.findById(idVote).orElseThrow(() -> new EntityNotFoundException("Emprendimiento no encontrado"));
+       Vote vote = voteRepository.findById(idVote).orElseThrow(() -> new EntityNotFoundException("Voto no encontrado"));
        voteRepository.delete(vote);
        return HttpStatus.ACCEPTED;
     }

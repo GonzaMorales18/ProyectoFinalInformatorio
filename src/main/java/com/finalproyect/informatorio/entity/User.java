@@ -1,6 +1,6 @@
 package com.finalproyect.informatorio.entity;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,22 +27,31 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @CreationTimestamp
-    private LocalDateTime creationDate;
+    private LocalDate creationDate;
     @JsonIgnore
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Vote> votes = new ArrayList<>();
     @NotBlank
     private String name;
+    @NotBlank
     private String lastName;
+    @NotBlank
     private String city;
+    @NotBlank
     private String province;
+    @NotBlank
     private String country;
     @Column(unique = true, nullable = false)
     @Email(regexp = "^[\\w!#$%&'*+/=?`{|}~^-]+(?:\\.[\\w!#$%&'*+/=?`{|}~^-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$")
     private String username;
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @NotBlank
     private String password;
+    @NotBlank
     private UserType userType;
+    @JsonIgnore
+    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Entrepreneurship> entrepreneurships = new ArrayList<>();
 
     public Long getId() {
         return id;
@@ -62,10 +71,10 @@ public class User {
     public void setLastName(String lastName) {
         this.lastName = lastName;
     }
-    public LocalDateTime getCreationDate() {
+    public LocalDate getCreationDate() {
         return creationDate;
     }
-    public void setCreationDate(LocalDateTime creationDate) {
+    public void setCreationDate(LocalDate creationDate) {
         this.creationDate = creationDate;
     }
     public String getCity() {
@@ -114,5 +123,16 @@ public class User {
     public void removeVote(Vote vote) {
         votes.remove(vote);
         vote.setUser(null);
+    }
+    public List<Entrepreneurship> getEntrepreneurships() {
+        return entrepreneurships;
+    }
+    public void addEntrepreneurship(Entrepreneurship entrepreneurship) {
+        entrepreneurships.add(entrepreneurship);
+        entrepreneurship.setOwner(this);
+    }
+    public void removeEntrepreneurship(Entrepreneurship entrepreneurship) {
+        entrepreneurships.remove(entrepreneurship);
+        entrepreneurship.setOwner(null);
     }
 }
