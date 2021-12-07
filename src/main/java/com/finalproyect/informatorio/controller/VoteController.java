@@ -42,13 +42,27 @@ public class VoteController {
     // ALTA
     @PostMapping(value = "/vote")
     public ResponseEntity<?> setVote(@RequestBody @Valid NewVote newVote){
-        Vote vote = new Vote();
         User user = userRepository.findById(newVote.getIdUser()).orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
-        vote.setUser(user);
         Entrepreneurship entrepreneurship = entrepreneurshipRepository.findById(newVote.getIdEntrepreneurship()).orElseThrow(() -> new EntityNotFoundException("Emprendimiento no encontrado"));
-        vote.setEntrepreneurship(entrepreneurship);
-        vote.setGeneratedIn(newVote.getGeneratedIn());
-        return new ResponseEntity(voteRepository.save(vote), HttpStatus.CREATED);
+        Vote vote = new Vote();
+        boolean flag = true;
+        if (String.valueOf(user.getUserType()) == "USUARIO" || String.valueOf(user.getUserType()) == "COLABORADOR"){
+            for (Vote x: voteRepository.findAll()){
+                if (x.getEntrepreneurship() == entrepreneurship && x.getUser() == user){
+                    flag = false;
+                } 
+            }
+            if (flag == true){
+                vote.setUser(user);
+                vote.setEntrepreneurship(entrepreneurship);
+                vote.setGeneratedIn(newVote.getGeneratedIn());
+                return new ResponseEntity(voteRepository.save(vote), HttpStatus.CREATED);
+            } else {
+                return null;
+            }
+        } else {
+            return null;
+        }
     }
 
     // MOSTRAR TODOS

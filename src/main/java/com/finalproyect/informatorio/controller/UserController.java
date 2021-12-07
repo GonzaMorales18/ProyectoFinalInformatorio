@@ -1,7 +1,6 @@
 package com.finalproyect.informatorio.controller;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;

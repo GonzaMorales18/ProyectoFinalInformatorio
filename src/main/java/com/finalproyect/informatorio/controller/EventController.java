@@ -82,10 +82,4 @@ public class EventController {
         return new ResponseEntity(eventRepository.save(newEvent),HttpStatus.CREATED);
     }
 
-    // MOSTAR TODOS
-    /* @GetMapping(value = "/events/ranking/{idEvent}")
-    public ResponseEntity<Event> getRanking(@PathVariable ("idEvent") Long idEvent){
-        return new ResponseEntity(entrepreneurshipRepository.rankingForVotes(idEvent), HttpStatus.OK);
-    } */
-
 }

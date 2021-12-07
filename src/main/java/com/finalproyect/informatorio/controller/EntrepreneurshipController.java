@@ -50,11 +50,14 @@ public class EntrepreneurshipController {
     // ALTA
     @PostMapping(value = "/entrepreneurship/{idOwner}")
     public ResponseEntity<?> set(@PathVariable ("idOwner") Long idOwner, @RequestBody @Valid Entrepreneurship entrepreneurship){
-        User user = userRepository.findById(idOwner).orElseThrow(() -> new EntityNotFoundException("Creador no encontrado"));
+        User user = userRepository.findById(idOwner).orElseThrow(() -> new EntityNotFoundException("OWNER no encontrado"));
         if (String.valueOf(user.getUserType()) == "OWNER"){
-            entrepreneurship.setOwner(user); 
+            entrepreneurship.setOwner(user);
+            return new ResponseEntity(entrepreneurshipRepository.save(entrepreneurship), HttpStatus.CREATED);
+        } else {
+            new EntityNotFoundException("El usuario asignado no es OWNER");
+            return null;
         }
-        return new ResponseEntity(entrepreneurshipRepository.save(entrepreneurship), HttpStatus.CREATED);
     }
 
     // MOSTRAR TODOS
@@ -89,10 +92,7 @@ public class EntrepreneurshipController {
     @PutMapping("/entrepreneurship/{idEntrepreneurship}/publish")
     public ResponseEntity<?> publish(@RequestBody @Valid Entrepreneurship entrepreneurship, @PathVariable ("idEntrepreneurship") Long idEntrepreneurship){
         Entrepreneurship newEntrepreneurship = entrepreneurshipRepository.findById(idEntrepreneurship).orElseThrow(() -> new EntityNotFoundException("Emprendimiento no encontrado"));
-        User user = newEntrepreneurship.getOwner();
-        if (String.valueOf(user.getUserType()) == "OWNER"){
-            newEntrepreneurship.setPublicated(entrepreneurship.isPublicated());
-        } 
+        newEntrepreneurship.setPublicated(entrepreneurship.isPublicated());
         return new ResponseEntity(entrepreneurshipRepository.save(newEntrepreneurship),HttpStatus.CREATED);
     }
 
